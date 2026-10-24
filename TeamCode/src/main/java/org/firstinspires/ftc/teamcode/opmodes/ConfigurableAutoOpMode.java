@@ -25,7 +25,7 @@ import org.firstinspires.ftc.teamcode.subsystems.RobotContainer;
  * 3. Modular Ivy Command routines stitching PedroPathing follower paths with mechanism subsystems.
  * 4. Extends FTC's iterative OpMode structure (init, init_loop, start, loop).
  */
-@Autonomous(name = "Configurable Auto (PP3 + Ivy)", group = "Autonomous")
+@Autonomous(name = "Configurable Auto (PP3 + Ivy)", group = "01 Autonomous")
 public class ConfigurableAutoOpMode extends OpMode {
 
     private Follower follower;

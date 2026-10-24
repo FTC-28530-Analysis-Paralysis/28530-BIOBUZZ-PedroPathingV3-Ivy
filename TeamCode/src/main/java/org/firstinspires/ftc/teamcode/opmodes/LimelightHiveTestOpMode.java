@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.subsystems.SwivelSubsystem;
  * Diagnostic OpMode to test Limelight 3A AprilTag reading on Hive structures
  * and calibrate Hive Tipped Up vs Tipped Down detection thresholds using rising-edge button detection.
  */
-@TeleOp(name = "Limelight Hive AprilTag Test", group = "Testing")
+@TeleOp(name = "Limelight Hive AprilTag Test", group = "02 Testing")
 public class LimelightHiveTestOpMode extends OpMode {
 
     private LimelightSubsystem limelight;

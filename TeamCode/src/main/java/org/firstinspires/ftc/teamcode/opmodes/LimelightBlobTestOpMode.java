@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.subsystems.SwivelSubsystem;
  * Diagnostic OpMode to test Limelight 3A Color Blob detection for Pollen (Yellow)
  * and Nectar (Red / Blue) across Red and Blue Alliances using FTC SDK rising-edge button detection.
  */
-@TeleOp(name = "Limelight Blob & Nectar Test", group = "Testing")
+@TeleOp(name = "Limelight Blob & Nectar Test", group = "02 Testing")
 public class LimelightBlobTestOpMode extends OpMode {
 
     private LimelightSubsystem limelight;
