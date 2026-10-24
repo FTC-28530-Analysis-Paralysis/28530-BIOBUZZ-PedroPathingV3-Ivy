@@ -2,14 +2,13 @@ package org.firstinspires.ftc.teamcode.opmodes;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.subsystems.LimelightSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.SwivelSubsystem;
 
 /**
  * Diagnostic OpMode to test Limelight 3A AprilTag reading on Hive structures
- * and calibrate Hive Tipped Up vs Tipped Down detection thresholds.
+ * and calibrate Hive Tipped Up vs Tipped Down detection thresholds using rising-edge button detection.
  */
 @TeleOp(name = "Limelight Hive AprilTag Test", group = "Testing")
 public class LimelightHiveTestOpMode extends OpMode {
@@ -17,7 +16,6 @@ public class LimelightHiveTestOpMode extends OpMode {
     private LimelightSubsystem limelight;
     private SwivelSubsystem swivel;
 
-    private final ElapsedTime debounceTimer = new ElapsedTime();
     private boolean isAprilTagPipeline = true;
 
     @Override
@@ -30,7 +28,6 @@ public class LimelightHiveTestOpMode extends OpMode {
 
         telemetry.addLine("=== LIMELIGHT HIVE TEST INITIALIZED ===");
         telemetry.addLine("Ready. Press START.");
-        telemetry.update();
     }
 
     @Override
@@ -44,39 +41,31 @@ public class LimelightHiveTestOpMode extends OpMode {
         telemetry.addLine("------------------------------------");
 
         limelight.printTelemetry(telemetry);
-        telemetry.update();
     }
 
     private void handleControls() {
-        if (debounceTimer.milliseconds() < 200) return;
-
         // Adjust vertical tip angle threshold
-        if (gamepad1.dpad_up) {
+        if (gamepad1.dpadUpWasPressed()) {
             double currentThreshold = limelight.getTyTipThresholdDegrees();
             limelight.setTyTipThresholdDegrees(currentThreshold + 0.5);
-            debounceTimer.reset();
-        } else if (gamepad1.dpad_down) {
+        } else if (gamepad1.dpadDownWasPressed()) {
             double currentThreshold = limelight.getTyTipThresholdDegrees();
             limelight.setTyTipThresholdDegrees(Math.max(0.5, currentThreshold - 0.5));
-            debounceTimer.reset();
         }
 
         // Swivel positions
-        if (gamepad1.a) {
+        if (gamepad1.aWasPressed()) {
             swivel.lookAtHive();
-            debounceTimer.reset();
-        } else if (gamepad1.b) {
+        } else if (gamepad1.bWasPressed()) {
             swivel.lookAtField();
-            debounceTimer.reset();
         }
 
         // Toggle pipeline
-        if (gamepad1.y) {
+        if (gamepad1.yWasPressed()) {
             isAprilTagPipeline = !isAprilTagPipeline;
             limelight.setPipeline(isAprilTagPipeline ? 
                     LimelightSubsystem.Pipeline.APRIL_TAG_HIVE : 
                     LimelightSubsystem.Pipeline.BLOB_DETECTION);
-            debounceTimer.reset();
         }
     }
 }

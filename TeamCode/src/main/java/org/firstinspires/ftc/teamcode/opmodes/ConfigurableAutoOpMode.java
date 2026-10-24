@@ -12,7 +12,6 @@ import static com.pedropathing.ivy.pedro.PedroCommands.follow;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.pedro.Constants;
 import org.firstinspires.ftc.teamcode.paths.AutoPath1;
@@ -45,9 +44,6 @@ public class ConfigurableAutoOpMode extends OpMode {
     private SelectedRoutine selectedRoutine = SelectedRoutine.VISUALIZER_AUTO_PATH1;
     private double startDelaySeconds = 0.0;
     private boolean visionInterruptionEnabled = true;
-
-    // Gamepad debouncers
-    private final ElapsedTime menuTimer = new ElapsedTime();
 
     @Override
     public void init() {
@@ -185,27 +181,20 @@ public class ConfigurableAutoOpMode extends OpMode {
     }
 
     private void handleMenuInput() {
-        if (menuTimer.milliseconds() < 200) return;
-
-        if (gamepad1.dpad_up) {
+        if (gamepad1.dpadUpWasPressed()) {
             SelectedRoutine[] routines = SelectedRoutine.values();
             int nextIndex = (selectedRoutine.ordinal() + 1) % routines.length;
             selectedRoutine = routines[nextIndex];
-            menuTimer.reset();
-        } else if (gamepad1.dpad_down) {
+        } else if (gamepad1.dpadDownWasPressed()) {
             SelectedRoutine[] routines = SelectedRoutine.values();
             int prevIndex = (selectedRoutine.ordinal() - 1 + routines.length) % routines.length;
             selectedRoutine = routines[prevIndex];
-            menuTimer.reset();
-        } else if (gamepad1.dpad_right) {
+        } else if (gamepad1.dpadRightWasPressed()) {
             startDelaySeconds = Math.min(10.0, startDelaySeconds + 1.0);
-            menuTimer.reset();
-        } else if (gamepad1.dpad_left) {
+        } else if (gamepad1.dpadLeftWasPressed()) {
             startDelaySeconds = Math.max(0.0, startDelaySeconds - 1.0);
-            menuTimer.reset();
-        } else if (gamepad1.y) {
+        } else if (gamepad1.yWasPressed()) {
             visionInterruptionEnabled = !visionInterruptionEnabled;
-            menuTimer.reset();
         }
     }
 }
