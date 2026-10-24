@@ -5,17 +5,20 @@ import static com.pedropathing.ivy.commands.Commands.*;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
 /**
  * Subsystem for transfer / feed continuous rotation servo with Ivy Commands.
  */
 public class TransferSubsystem {
     private CRServo transferServo = null;
 
-    public void init(HardwareMap hardwareMap) {
+    public void init(HardwareMap hardwareMap, Telemetry telemetry) {
         try {
             transferServo = hardwareMap.get(CRServo.class, "transfer");
         } catch (Exception e) {
             // Hardware unconfigured
+            telemetry.addLine("Transfer Hardware unconfigured");
         }
     }
 

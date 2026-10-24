@@ -6,6 +6,8 @@ import static com.pedropathing.ivy.groups.Groups.sequential;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
 /**
  * Subsystem for flywheel launcher mechanism with Ivy Commands.
  */
@@ -13,7 +15,7 @@ public class LauncherSubsystem {
     private DcMotor leftFlywheel = null;
     private DcMotor rightFlywheel = null;
 
-    public void init(HardwareMap hardwareMap) {
+    public void init(HardwareMap hardwareMap, Telemetry telemetry) {
         try {
             leftFlywheel = hardwareMap.get(DcMotor.class, "left_flywheel");
             rightFlywheel = hardwareMap.get(DcMotor.class, "right_flywheel");
@@ -23,6 +25,7 @@ public class LauncherSubsystem {
             rightFlywheel.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         } catch (Exception e) {
             // Hardware unconfigured
+            telemetry.addLine("Launcher Hardware not configured");
         }
     }
 

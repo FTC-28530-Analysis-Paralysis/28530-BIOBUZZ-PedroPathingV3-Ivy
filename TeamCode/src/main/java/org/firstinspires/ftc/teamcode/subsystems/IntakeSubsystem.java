@@ -6,19 +6,22 @@ import static com.pedropathing.ivy.groups.Groups.sequential;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
 /**
  * Subsystem for collecting pollen/nectar wrapped with Ivy Commands.
  */
 public class IntakeSubsystem {
     private DcMotor intakeMotor = null;
 
-    public void init(HardwareMap hardwareMap) {
+    public void init(HardwareMap hardwareMap, Telemetry telemetry) {
         try {
             intakeMotor = hardwareMap.get(DcMotor.class, "intake");
             intakeMotor.setDirection(DcMotor.Direction.FORWARD);
             intakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         } catch (Exception e) {
             // Hardware unconfigured
+            telemetry.addLine("Intake hardware not configured.");
         }
     }
 

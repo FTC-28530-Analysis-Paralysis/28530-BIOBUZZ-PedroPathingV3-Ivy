@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.paths;
 
-import static com.pedropathing.api.Paths.*;
 import com.pedropathing.api.Paths;
 import com.pedropathing.api.PoseFactory;
 import com.pedropathing.math.Pose;
@@ -23,9 +22,9 @@ public class AutoPath1 implements PathContainer {
     public final Pose gardenToScoreStart = poseFactory.of(9, 9, 180);
     public final Pose gardenToScore = poseFactory.of(57, 14, 90);
     public final Pose gardenToScoreControl1 = poseFactory.of(19.9708, 15.4878, 0);
-    public final Pose scoreToGarden = poseFactory.of(11.8275, 42, 179.4941);
-    public final Pose scoreToGardenControl1 = poseFactory.of(57, 30, 0);
-    public final Pose scoreToGardenControl2 = poseFactory.of(25.2052, 42, 0);
+    public final Pose scoreToFlower = poseFactory.of(11.8275, 42, 179.4941);
+    public final Pose scoreToFlowerControl1 = poseFactory.of(57, 30, 0);
+    public final Pose scoreToFlowerControl2 = poseFactory.of(25.2052, 42, 0);
     public final Pose flowerToScore = poseFactory.of(57, 14, 91.1173);
     public final Pose flowerToScoreControl1 = poseFactory.of(25.4883, 42.2115, 0);
     public final Pose flowerToScoreControl2 = poseFactory.of(57.0049, 29.8635, 0);
@@ -55,11 +54,11 @@ public class AutoPath1 implements PathContainer {
     }
 
     public Path scoreToGarden() {
-        return Paths.curve(gardenToScore, scoreToGardenControl1, scoreToGardenControl2, scoreToGarden).tangent();
+        return Paths.curve(gardenToScore, scoreToFlowerControl1, scoreToFlowerControl2, scoreToFlower).tangent();
     }
 
     public Path flowerToScore() {
-        return Paths.curve(scoreToGarden, flowerToScoreControl1, flowerToScoreControl2, flowerToScore).reverseTangent();
+        return Paths.curve(scoreToFlower, flowerToScoreControl1, flowerToScoreControl2, flowerToScore).reverseTangent();
     }
 
     public Path scoreToPark() {
@@ -73,7 +72,7 @@ public class AutoPath1 implements PathContainer {
             case "scoreToGardenApproach": return scoreToGardenApproach();
             case "gardenPickup": return gardenPickup();
             case "gardenToScore": return gardenToScore();
-            case "scoreToGarden": return scoreToGarden();
+            case "scoreToFlower": return scoreToGarden();
             case "flowerToScore": return flowerToScore();
             case "scoreToPark": return scoreToPark();
             default: return null;

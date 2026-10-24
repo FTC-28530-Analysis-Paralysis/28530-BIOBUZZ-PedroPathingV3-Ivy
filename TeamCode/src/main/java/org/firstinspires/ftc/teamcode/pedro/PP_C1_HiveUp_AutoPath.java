@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.pedro;
 
-import static com.pedropathing.api.Paths.*;
 import com.pedropathing.api.Paths;
 
 import com.pedropathing.api.PoseFactory;
@@ -10,14 +9,13 @@ import com.pedropathing.paths.Path;
 import com.pedropathing.ivy.Command;
 import com.pedropathing.ivy.Scheduler;
 import static com.pedropathing.ivy.Scheduler.schedule;
-import static com.pedropathing.ivy.commands.Commands.*;
 import static com.pedropathing.ivy.groups.Groups.sequential;
 import static com.pedropathing.ivy.pedro.PedroCommands.follow;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-@Autonomous(name = "AutoPath", group = "Autonomous")
-public class AutoPath extends LinearOpMode {
+@Autonomous(name = "PP C1 Hive Up AutoPath", group = "Autonomous")
+public class PP_C1_HiveUp_AutoPath extends LinearOpMode {
 
     private Follower follower;
 
@@ -32,9 +30,9 @@ public class AutoPath extends LinearOpMode {
     private final Pose gardenToScoreStart = poseFactory.of(9, 9, 180);
     private final Pose gardenToScore = poseFactory.of(57, 14, 90);
     private final Pose gardenToScoreControl1 = poseFactory.of(19.9708, 15.4878, 0);
-    private final Pose scoreToGarden = poseFactory.of(11.8275, 42, 179.4941);
-    private final Pose scoreToGardenControl1 = poseFactory.of(57, 30, 0);
-    private final Pose scoreToGardenControl2 = poseFactory.of(25.2052, 42, 0);
+    private final Pose scoreToFlower = poseFactory.of(11.8275, 42, 179.4941);
+    private final Pose scoreToFlowerControl1 = poseFactory.of(57, 30, 0);
+    private final Pose scoreToFlowerControl2 = poseFactory.of(25.2052, 42, 0);
     private final Pose flowerToScore = poseFactory.of(57, 14, 91.1173);
     private final Pose flowerToScoreControl1 = poseFactory.of(25.4883, 42.2115, 0);
     private final Pose flowerToScoreControl2 = poseFactory.of(57.0049, 29.8635, 0);
@@ -49,7 +47,7 @@ public class AutoPath extends LinearOpMode {
                 follow(follower, scoreToGardenApproach()),
                 follow(follower, gardenPickup()),
                 follow(follower, gardenToScore()),
-                follow(follower, scoreToGarden()),
+                follow(follower, scoreToFlower()),
                 follow(follower, flowerToScore()),
                 follow(follower, scoreToPark())
         );
@@ -98,12 +96,12 @@ public class AutoPath extends LinearOpMode {
         return Paths.curve(gardenToScoreStart, gardenToScoreControl1, gardenToScore).linear(gardenToScoreStart, gardenToScore);
     }
 
-    public Path scoreToGarden() {
-        return Paths.curve(gardenToScore, scoreToGardenControl1, scoreToGardenControl2, scoreToGarden).tangent();
+    public Path scoreToFlower() {
+        return Paths.curve(gardenToScore, scoreToFlowerControl1, scoreToFlowerControl2, scoreToFlower).tangent();
     }
 
     public Path flowerToScore() {
-        return Paths.curve(scoreToGarden, flowerToScoreControl1, flowerToScoreControl2, flowerToScore).reverseTangent();
+        return Paths.curve(scoreToFlower, flowerToScoreControl1, flowerToScoreControl2, flowerToScore).reverseTangent();
     }
 
     public Path scoreToPark() {

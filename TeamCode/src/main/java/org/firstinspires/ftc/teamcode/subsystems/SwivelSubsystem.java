@@ -5,6 +5,8 @@ import static com.pedropathing.ivy.commands.Commands.*;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
 /**
  * Subsystem for Limelight tilting servo (tilting up at hive vs down at field).
  */
@@ -14,11 +16,12 @@ public class SwivelSubsystem {
     public static final double POSITION_UP_HIVE = 0.85;
     public static final double POSITION_DOWN_FIELD = 0.15;
 
-    public void init(HardwareMap hardwareMap) {
+    public void init(HardwareMap hardwareMap, Telemetry telemetry) {
         try {
             swivelServo = hardwareMap.get(Servo.class, "swivel");
         } catch (Exception e) {
             // Hardware unconfigured
+            telemetry.addLine("Swivel Hardware Unconfigured");
         }
     }
 

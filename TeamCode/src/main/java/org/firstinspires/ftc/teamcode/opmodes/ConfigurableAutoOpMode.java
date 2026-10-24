@@ -11,7 +11,7 @@ import static com.pedropathing.ivy.groups.Groups.sequential;
 import static com.pedropathing.ivy.pedro.PedroCommands.follow;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.pedro.Constants;
@@ -24,9 +24,10 @@ import org.firstinspires.ftc.teamcode.subsystems.RobotContainer;
  * 1. An interactive initialization menu on gamepad1 to select path routines, start delays, and vision modes.
  * 2. Separation of path definitions (PathContainer classes) from execution logic.
  * 3. Modular Ivy Command routines stitching PedroPathing follower paths with mechanism subsystems.
+ * 4. Extends FTC's iterative OpMode structure (init, init_loop, start, loop).
  */
 @Autonomous(name = "Configurable Auto (PP3 + Ivy)", group = "Autonomous")
-public class ConfigurableAutoOpMode extends LinearOpMode {
+public class ConfigurableAutoOpMode extends OpMode {
 
     private Follower follower;
     private RobotContainer robot;
@@ -49,31 +50,31 @@ public class ConfigurableAutoOpMode extends LinearOpMode {
     private final ElapsedTime menuTimer = new ElapsedTime();
 
     @Override
-    public void runOpMode() {
+    public void init() {
         Scheduler.reset();
         follower = Constants.create(hardwareMap);
-        robot = new RobotContainer(hardwareMap);
+        robot = new RobotContainer(hardwareMap, telemetry);
 
-        // -------------------------------------------------------------
-        // INIT LOOP: Interactive Configuration Menu
-        // -------------------------------------------------------------
-        while (!isStarted() && !isStopRequested()) {
-            handleMenuInput();
+        PathContainer currentPathContainer = getSelectedPathContainer();
+        follower.setPose(currentPathContainer.getStartPose());
+        follower.update();
+    }
 
-            telemetry.addLine("=== 28530 BIOBUZZ AUTO CONFIGURATION ===");
-            telemetry.addData("[D-Pad Up/Down] Selected Routine", selectedRoutine.getName());
-            telemetry.addData("[D-Pad Left/Right] Start Delay", "%.1f sec", startDelaySeconds);
-            telemetry.addData("[Y Button] Vision Interruption", visionInterruptionEnabled ? "ENABLED (Limelight Interrupts)" : "DISABLED (Pure Pathing)");
-            telemetry.addLine("---------------------------------------");
-            telemetry.addLine("Press START when driver station is ready.");
-            telemetry.update();
+    @Override
+    public void init_loop() {
+        handleMenuInput();
 
-            sleep(20);
-        }
+        telemetry.addLine("=== 28530 BIOBUZZ AUTO CONFIGURATION ===");
+        telemetry.addData("[D-Pad Up/Down] Selected Routine", selectedRoutine.getName());
+        telemetry.addData("[D-Pad Left/Right] Start Delay", "%.1f sec", startDelaySeconds);
+        telemetry.addData("[Y Button] Vision Interruption", visionInterruptionEnabled ? "ENABLED (Limelight Interrupts)" : "DISABLED (Pure Pathing)");
+        telemetry.addLine("---------------------------------------");
+        telemetry.addLine("Press START when driver station is ready.");
+    }
 
-        if (isStopRequested()) return;
-
-        // Instantiate chosen PathContainer
+    @Override
+    public void start() {
+        // Instantiate chosen PathContainer and sync initial follower pose
         PathContainer currentPathContainer = getSelectedPathContainer();
         follower.setPose(currentPathContainer.getStartPose());
         follower.update();
@@ -81,24 +82,20 @@ public class ConfigurableAutoOpMode extends LinearOpMode {
         // Build and schedule Ivy Command Routine
         Command autoRoutine = buildAutoRoutine(currentPathContainer);
         schedule(autoRoutine);
+    }
 
-        // -------------------------------------------------------------
-        // OPMODE EXECUTION LOOP
-        // -------------------------------------------------------------
-        while (opModeIsActive()) {
-            follower.update();
-            Scheduler.execute();
+    @Override
+    public void loop() {
+        follower.update();
+        Scheduler.execute();
 
-            telemetry.addData("X", follower.pose().x());
-            telemetry.addData("Y", follower.pose().y());
-            telemetry.addData("Heading (deg)", Math.toDegrees(follower.pose().heading()));
+        telemetry.addData("X", follower.pose().x());
+        telemetry.addData("Y", follower.pose().y());
+        telemetry.addData("Heading (deg)", Math.toDegrees(follower.pose().heading()));
 
-            if (follower.currentPath() != null) {
-                telemetry.addData("Path Remaining Distance", follower.distanceToEndpoint());
-                telemetry.addData("Path Index", follower.pathIndex());
-            }
-
-            telemetry.update();
+        if (follower.currentPath() != null) {
+            telemetry.addData("Path Remaining Distance", follower.distanceToEndpoint());
+            telemetry.addData("Path Index", follower.pathIndex());
         }
     }
 
