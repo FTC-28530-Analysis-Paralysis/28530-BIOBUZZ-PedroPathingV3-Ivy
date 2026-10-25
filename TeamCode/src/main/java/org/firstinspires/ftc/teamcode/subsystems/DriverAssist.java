@@ -5,10 +5,8 @@ import com.pedropathing.follower.Follower;
 import com.pedropathing.math.Pose;
 import com.pedropathing.utils.Angle;
 
+import org.firstinspires.ftc.teamcode.config.FieldLocations;
 import org.firstinspires.ftc.teamcode.config.GameState;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * DriverAssist provides teleop drive utilities for PedroPathing 3, including:
@@ -38,23 +36,8 @@ public class DriverAssist {
     // Turning multiplier to scale manual joystick turning speed for finer control.
     private double turningMultiplier = 0.8;
 
-    // Default Hive Target Poses (X, Y in inches, Heading in radians)
-    private static final Pose RED_HIVE_1  = new Pose(57.0, 14.0, Math.toRadians(90.0));
-    private static final Pose RED_HIVE_2  = new Pose(57.0, 130.0, Math.toRadians(270.0));
-    private static final Pose BLUE_HIVE_1 = new Pose(87.0, 14.0, Math.toRadians(90.0));
-    private static final Pose BLUE_HIVE_2 = new Pose(87.0, 130.0, Math.toRadians(270.0));
-
-    private final List<Pose> customRedHives = new ArrayList<>();
-    private final List<Pose> customBlueHives = new ArrayList<>();
-
     public DriverAssist(Follower follower) {
         this.follower = follower;
-        
-        // Add default hives
-        customRedHives.add(RED_HIVE_1);
-        customRedHives.add(RED_HIVE_2);
-        customBlueHives.add(BLUE_HIVE_1);
-        customBlueHives.add(BLUE_HIVE_2);
     }
 
     public void setMode(DriveMode mode) {
@@ -87,24 +70,7 @@ public class DriverAssist {
      * @return {@link Pose} of the closest Hive to the robot's current position.
      */
     public Pose getNearestHivePose() {
-        Pose robotPose = follower.pose();
-        List<Pose> candidateHives = (GameState.alliance == GameState.Alliance.RED) ? customRedHives : customBlueHives;
-
-        Pose nearest = null;
-        double minDistance = Double.MAX_VALUE;
-
-        for (Pose hive : candidateHives) {
-            double dx = hive.x() - robotPose.x();
-            double dy = hive.y() - robotPose.y();
-            double distance = Math.hypot(dx, dy);
-
-            if (distance < minDistance) {
-                minDistance = distance;
-                nearest = hive;
-            }
-        }
-
-        return nearest != null ? nearest : candidateHives.get(0);
+        return FieldLocations.getNearestHive(follower.pose(), GameState.alliance);
     }
 
     /**

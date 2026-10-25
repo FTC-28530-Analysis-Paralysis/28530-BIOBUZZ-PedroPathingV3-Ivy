@@ -1,8 +1,6 @@
 package org.firstinspires.ftc.teamcode.pedro;
 
 import com.pedropathing.api.Paths;
-
-import com.pedropathing.api.PoseFactory;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.math.Pose;
 import com.pedropathing.paths.Path;
@@ -14,31 +12,31 @@ import static com.pedropathing.ivy.pedro.PedroCommands.follow;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.teamcode.config.FieldLocations;
+
 @Autonomous(name = "PP C1 Hive Up AutoPath", group = "Autonomous")
 public class PP_C1_HiveUp_AutoPath extends LinearOpMode {
 
     private Follower follower;
 
-    private final PoseFactory poseFactory = PoseFactory.degrees();
-
-    private final Pose start = poseFactory.of(57, 8.5, 90);
-    private final Pose startToScore = poseFactory.of(57, 14, 90);
-    private final Pose scoreToGardenApproach = poseFactory.of(24, 9.5, -179.4926);
-    private final Pose scoreToGardenApproachControl1 = poseFactory.of(57, 21, 0);
-    private final Pose scoreToGardenApproachControl2 = poseFactory.of(36.8, 9.5, 0);
-    private final Pose gardenPickup = poseFactory.of(9, 9, 180);
-    private final Pose gardenToScoreStart = poseFactory.of(9, 9, 180);
-    private final Pose gardenToScore = poseFactory.of(57, 14, 90);
-    private final Pose gardenToScoreControl1 = poseFactory.of(19.9708, 15.4878, 0);
-    private final Pose scoreToFlower = poseFactory.of(11.8275, 42, 179.4941);
-    private final Pose scoreToFlowerControl1 = poseFactory.of(57, 30, 0);
-    private final Pose scoreToFlowerControl2 = poseFactory.of(25.2052, 42, 0);
-    private final Pose flowerToScore = poseFactory.of(57, 14, 91.1173);
-    private final Pose flowerToScoreControl1 = poseFactory.of(25.4883, 42.2115, 0);
-    private final Pose flowerToScoreControl2 = poseFactory.of(57.0049, 29.8635, 0);
-    private final Pose scoreToPark = poseFactory.of(10, 90, 90.5391);
-    private final Pose scoreToParkControl1 = poseFactory.of(57, 28, 0);
-    private final Pose scoreToParkControl2 = poseFactory.of(10, 40, 0);
+    private final Pose start = FieldLocations.START;
+    private final Pose startToScore = FieldLocations.SCORE;
+    private final Pose scoreToGardenApproach = FieldLocations.GARDEN_APPROACH;
+    private final Pose scoreToGardenApproachControl1 = FieldLocations.SCORE_TO_GARDEN_CONTROL_1;
+    private final Pose scoreToGardenApproachControl2 = FieldLocations.SCORE_TO_GARDEN_CONTROL_2;
+    private final Pose gardenPickup = FieldLocations.GARDEN_PICKUP;
+    private final Pose gardenToScoreStart = FieldLocations.GARDEN_TO_SCORE_START;
+    private final Pose gardenToScore = FieldLocations.GARDEN_TO_SCORE;
+    private final Pose gardenToScoreControl1 = FieldLocations.GARDEN_TO_SCORE_CONTROL_1;
+    private final Pose scoreToFlower = FieldLocations.SCORE_TO_FLOWER;
+    private final Pose scoreToFlowerControl1 = FieldLocations.SCORE_TO_FLOWER_CONTROL_1;
+    private final Pose scoreToFlowerControl2 = FieldLocations.SCORE_TO_FLOWER_CONTROL_2;
+    private final Pose flowerToScore = FieldLocations.FLOWER_TO_SCORE;
+    private final Pose flowerToScoreControl1 = FieldLocations.FLOWER_TO_SCORE_CONTROL_1;
+    private final Pose flowerToScoreControl2 = FieldLocations.FLOWER_TO_SCORE_CONTROL_2;
+    private final Pose scoreToPark = FieldLocations.PARK;
+    private final Pose scoreToParkControl1 = FieldLocations.SCORE_TO_PARK_CONTROL_1;
+    private final Pose scoreToParkControl2 = FieldLocations.SCORE_TO_PARK_CONTROL_2;
 
     // Autonomous routine
     public Command autoRoutine() {
