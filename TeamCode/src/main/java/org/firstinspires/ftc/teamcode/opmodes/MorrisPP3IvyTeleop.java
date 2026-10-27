@@ -24,6 +24,7 @@ public class MorrisPP3IvyTeleop extends OpMode {
     private Follower follower;
     private RobotContainer robot;
     private DriverAssist driverAssist;
+    public static Pose startingPose;
 
     private boolean isIntakeRunning = false;
 
@@ -33,6 +34,7 @@ public class MorrisPP3IvyTeleop extends OpMode {
         follower = Constants.create(hardwareMap);
         robot = new RobotContainer(hardwareMap, telemetry);
         driverAssist = new DriverAssist(follower);
+        follower.setPose(startingPose == null ? new Pose(0,0,0) : startingPose);
 
         // Default swivel to field intake position
         robot.swivel.lookAtField();
@@ -60,8 +62,8 @@ public class MorrisPP3IvyTeleop extends OpMode {
         telemetry.addLine("=== 28530 BIOBUZZ TELEOP ===");
         telemetry.addData("Drive Mode [Start Button]", driverAssist.getMode().getName());
         telemetry.addData("Heading (deg)", Math.toDegrees(follower.pose().heading()));
-        telemetry.addData("Target Hive Pose", "X: %.1f | Y: %.1f", 
-                driverAssist.getNearestHivePose().x(), driverAssist.getNearestHivePose().y());
+//        telemetry.addData("Target Hive Pose", "X: %.1f | Y: %.1f",
+//                driverAssist.getNearestHivePose().x(), driverAssist.getNearestHivePose().y());
         telemetry.addLine("[Back/Select Button] Reset Heading (0°)");
         telemetry.addData("Robot Pose", "X: %.1f | Y: %.1f", follower.pose().x(), follower.pose().y());
         telemetry.addLine("--------------------------------");
