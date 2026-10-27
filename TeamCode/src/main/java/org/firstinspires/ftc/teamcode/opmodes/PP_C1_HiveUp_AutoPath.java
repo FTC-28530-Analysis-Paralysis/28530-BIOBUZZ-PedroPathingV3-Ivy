@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.pedro;
+package org.firstinspires.ftc.teamcode.opmodes;
 
 import com.pedropathing.api.Paths;
 import com.pedropathing.follower.Follower;
@@ -13,30 +13,28 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.config.FieldLocations;
+import org.firstinspires.ftc.teamcode.pedro.Constants;
 
 @Autonomous(name = "PP C1 Hive Up AutoPath", group = "Autonomous")
 public class PP_C1_HiveUp_AutoPath extends LinearOpMode {
 
     private Follower follower;
 
-    private final Pose start = FieldLocations.START;
-    private final Pose startToScore = FieldLocations.SCORE;
-    private final Pose scoreToGardenApproach = FieldLocations.GARDEN_APPROACH;
-    private final Pose scoreToGardenApproachControl1 = FieldLocations.SCORE_TO_GARDEN_CONTROL_1;
-    private final Pose scoreToGardenApproachControl2 = FieldLocations.SCORE_TO_GARDEN_CONTROL_2;
-    private final Pose gardenPickup = FieldLocations.GARDEN_PICKUP;
-    private final Pose gardenToScoreStart = FieldLocations.GARDEN_TO_SCORE_START;
-    private final Pose gardenToScore = FieldLocations.GARDEN_TO_SCORE;
-    private final Pose gardenToScoreControl1 = FieldLocations.GARDEN_TO_SCORE_CONTROL_1;
-    private final Pose scoreToFlower = FieldLocations.SCORE_TO_FLOWER;
-    private final Pose scoreToFlowerControl1 = FieldLocations.SCORE_TO_FLOWER_CONTROL_1;
-    private final Pose scoreToFlowerControl2 = FieldLocations.SCORE_TO_FLOWER_CONTROL_2;
-    private final Pose flowerToScore = FieldLocations.FLOWER_TO_SCORE;
-    private final Pose flowerToScoreControl1 = FieldLocations.FLOWER_TO_SCORE_CONTROL_1;
-    private final Pose flowerToScoreControl2 = FieldLocations.FLOWER_TO_SCORE_CONTROL_2;
-    private final Pose scoreToPark = FieldLocations.PARK;
-    private final Pose scoreToParkControl1 = FieldLocations.SCORE_TO_PARK_CONTROL_1;
-    private final Pose scoreToParkControl2 = FieldLocations.SCORE_TO_PARK_CONTROL_2;
+    private final Pose start = FieldLocations.START_C1;
+    private final Pose score = FieldLocations.SCORE_C1;
+    private final Pose scoreToGardenApproach = FieldLocations.RED_GARDEN_APPROACH;
+    private final Pose scoreToGardenApproachControl1 = FieldLocations.SCORE_TO_RED_GARDEN_CONTROL_1;
+    private final Pose scoreToGardenApproachControl2 = FieldLocations.SCORE_TO_RED_GARDEN_CONTROL_2;
+    private final Pose gardenPickup = FieldLocations.RED_GARDEN_PICKUP;
+    private final Pose gardenToScoreControl1 = FieldLocations.RED_GARDEN_TO_SCORE_CONTROL_1;
+    private final Pose flower = FieldLocations.FLOWER_A2_3;
+    private final Pose scoreToFlowerControl1 = FieldLocations.SCORE_TO_FLOWER_A23_CONTROL_1;
+    private final Pose scoreToFlowerControl2 = FieldLocations.SCORE_TO_FLOWER_A23_CONTROL_2;
+    private final Pose flowerToScoreControl1 = FieldLocations.FLOWER_A23_TO_SCORE_CONTROL_1;
+    private final Pose flowerToScoreControl2 = FieldLocations.FLOWER_A23_TO_SCORE_CONTROL_2;
+    private final Pose scoreToPark = FieldLocations.RED_PARK_A4;
+    private final Pose scoreToParkControl1 = FieldLocations.SCORE_C1_TO_RED_PARK_CONTROL_1;
+    private final Pose scoreToParkControl2 = FieldLocations.SCORE_C1_TO_RED_PARK_CONTROL_2;
 
     // Autonomous routine
     public Command autoRoutine() {
@@ -72,6 +70,7 @@ public class PP_C1_HiveUp_AutoPath extends LinearOpMode {
             if (follower.currentPath() != null) {
                 telemetry.addData("Current path distance remaining", follower.distanceToEndpoint());
                 telemetry.addData("Path number", follower.pathIndex());
+                telemetry.addData("Path name", follower.currentPath().toString());
             }
 
             telemetry.update();
@@ -79,11 +78,11 @@ public class PP_C1_HiveUp_AutoPath extends LinearOpMode {
     }
 
     public Path startToScore() {
-        return Paths.line(start, startToScore).linear(start, startToScore);
+        return Paths.line(start, score).linear(start, score);
     }
 
     public Path scoreToGardenApproach() {
-        return Paths.curve(startToScore, scoreToGardenApproachControl1, scoreToGardenApproachControl2, scoreToGardenApproach).tangent();
+        return Paths.curve(score, scoreToGardenApproachControl1, scoreToGardenApproachControl2, scoreToGardenApproach).tangent();
     }
 
     public Path gardenPickup() {
@@ -91,18 +90,18 @@ public class PP_C1_HiveUp_AutoPath extends LinearOpMode {
     }
 
     public Path gardenToScore() {
-        return Paths.curve(gardenToScoreStart, gardenToScoreControl1, gardenToScore).linear(gardenToScoreStart, gardenToScore);
+        return Paths.curve(gardenPickup, gardenToScoreControl1, score).linear(gardenPickup, score);
     }
 
     public Path scoreToFlower() {
-        return Paths.curve(gardenToScore, scoreToFlowerControl1, scoreToFlowerControl2, scoreToFlower).tangent();
+        return Paths.curve(score, scoreToFlowerControl1, scoreToFlowerControl2, flower).tangent();
     }
 
     public Path flowerToScore() {
-        return Paths.curve(scoreToFlower, flowerToScoreControl1, flowerToScoreControl2, flowerToScore).reverseTangent();
+        return Paths.curve(flower, flowerToScoreControl1, flowerToScoreControl2, score).reverseTangent();
     }
 
     public Path scoreToPark() {
-        return Paths.curve(flowerToScore, scoreToParkControl1, scoreToParkControl2, scoreToPark).tangent();
+        return Paths.curve(score, scoreToParkControl1, scoreToParkControl2, scoreToPark).tangent();
     }
 }

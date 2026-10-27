@@ -14,7 +14,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.pedro.Constants;
-import org.firstinspires.ftc.teamcode.paths.AutoPath1;
+import org.firstinspires.ftc.teamcode.paths.HiveUpTeamplayPath;
 import org.firstinspires.ftc.teamcode.paths.PathContainer;
 import org.firstinspires.ftc.teamcode.subsystems.RobotContainer;
 
@@ -99,7 +99,7 @@ public class ConfigurableAutoOpMode extends OpMode {
         switch (selectedRoutine) {
             case VISUALIZER_AUTO_PATH1:
             default:
-                return new AutoPath1();
+                return new HiveUpTeamplayPath();
         }
     }
 
@@ -109,8 +109,8 @@ public class ConfigurableAutoOpMode extends OpMode {
     private Command buildAutoRoutine(PathContainer pathContainer) {
         Command delayCommand = startDelaySeconds > 0 ? waitMs(startDelaySeconds * 1000.0) : instant(() -> {});
 
-        if (pathContainer instanceof AutoPath1) {
-            AutoPath1 path = (AutoPath1) pathContainer;
+        if (pathContainer instanceof HiveUpTeamplayPath) {
+            HiveUpTeamplayPath path = (HiveUpTeamplayPath) pathContainer;
 
             if (visionInterruptionEnabled) {
                 // Reactive Routine using Limelight triggers & fallbacks
@@ -166,7 +166,7 @@ public class ConfigurableAutoOpMode extends OpMode {
                         follow(follower, path.scoreToGardenApproach()),
                         follow(follower, path.gardenPickup()),
                         follow(follower, path.gardenToScore()),
-                        follow(follower, path.scoreToGarden()),
+                        follow(follower, path.scoreToFlower()),
                         follow(follower, path.flowerToScore()),
                         follow(follower, path.scoreToPark())
                 );
