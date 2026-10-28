@@ -33,7 +33,7 @@ public class ConfigurableAutoOpMode extends OpMode {
 
     // Selection Options
     public enum SelectedRoutine {
-        VISUALIZER_AUTO_PATH1("Visualizer AutoPath1"),
+        HIVE_UP_TEAMPLAY("Hive Up Teamplay"),
         PARK_ONLY("Park Only");
 
         private final String name;
@@ -41,7 +41,7 @@ public class ConfigurableAutoOpMode extends OpMode {
         public String getName() { return name; }
     }
 
-    private SelectedRoutine selectedRoutine = SelectedRoutine.VISUALIZER_AUTO_PATH1;
+    private SelectedRoutine selectedRoutine = SelectedRoutine.HIVE_UP_TEAMPLAY;
     private double startDelaySeconds = 0.0;
     private boolean visionInterruptionEnabled = true;
 
@@ -97,7 +97,7 @@ public class ConfigurableAutoOpMode extends OpMode {
 
     private PathContainer getSelectedPathContainer() {
         switch (selectedRoutine) {
-            case VISUALIZER_AUTO_PATH1:
+            case HIVE_UP_TEAMPLAY:
             default:
                 return new HiveUpTeamplayPath();
         }
