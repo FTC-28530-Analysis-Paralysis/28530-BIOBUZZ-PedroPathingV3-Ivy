@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.opmodes;
 
+import com.pedropathing.api.PoseFactory;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.ivy.Scheduler;
 import com.pedropathing.math.Pose;
@@ -24,17 +25,21 @@ public class MorrisPP3IvyTeleop extends OpMode {
     private Follower follower;
     private RobotContainer robot;
     private DriverAssist driverAssist;
-    public static Pose startingPose;
+    private final PoseFactory poseFactory = PoseFactory.degrees();
 
+    public final Pose start = poseFactory.of(57, 8.5, 90);
     private boolean isIntakeRunning = false;
 
     @Override
     public void init() {
         Scheduler.reset();
+
         follower = Constants.create(hardwareMap);
+        follower.setPose(start);
+        follower.update();
         robot = new RobotContainer(hardwareMap, telemetry);
         driverAssist = new DriverAssist(follower);
-        follower.setPose(startingPose == null ? new Pose(0,0,0) : startingPose);
+
 
         // Default swivel to field intake position
         robot.swivel.lookAtField();
