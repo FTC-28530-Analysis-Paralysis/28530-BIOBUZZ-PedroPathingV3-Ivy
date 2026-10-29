@@ -52,6 +52,7 @@ public class MorrisPP3IvyTeleop extends OpMode {
     @Override
     public void start() {
         Scheduler.reset();
+        follower.startTeleop(); // Switches PedroPathing out of PID position hold into TeleOp mode
     }
 
     @Override
