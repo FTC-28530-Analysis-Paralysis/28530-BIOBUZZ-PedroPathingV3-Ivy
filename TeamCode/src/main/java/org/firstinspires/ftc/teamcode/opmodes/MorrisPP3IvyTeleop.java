@@ -52,7 +52,6 @@ public class MorrisPP3IvyTeleop extends OpMode {
     @Override
     public void start() {
         Scheduler.reset();
-        follower.startTeleop(); // Switches PedroPathing out of PID position hold into TeleOp mode
     }
 
     @Override
@@ -68,8 +67,8 @@ public class MorrisPP3IvyTeleop extends OpMode {
         telemetry.addLine("=== 28530 BIOBUZZ TELEOP ===");
         telemetry.addData("Drive Mode [Start Button]", driverAssist.getMode().getName());
         telemetry.addData("Heading (deg)", Math.toDegrees(follower.pose().heading()));
-//        telemetry.addData("Target Hive Pose", "X: %.1f | Y: %.1f",
-//                driverAssist.getNearestHivePose().x(), driverAssist.getNearestHivePose().y());
+        telemetry.addData("Target Hive Pose", "X: %.1f | Y: %.1f",
+                driverAssist.getNearestHivePose().x(), driverAssist.getNearestHivePose().y());
         telemetry.addLine("[Back/Select Button] Reset Heading (0°)");
         telemetry.addData("Robot Pose", "X: %.1f | Y: %.1f", follower.pose().x(), follower.pose().y());
         telemetry.addLine("--------------------------------");

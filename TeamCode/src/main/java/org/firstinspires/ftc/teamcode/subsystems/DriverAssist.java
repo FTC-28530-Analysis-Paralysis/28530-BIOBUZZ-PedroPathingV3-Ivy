@@ -2,10 +2,12 @@ package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.pedropathing.drivetrain.DrivePowers;
 import com.pedropathing.follower.Follower;
+import com.pedropathing.follower.ManualDrive;
 import com.pedropathing.math.Pose;
 import com.pedropathing.utils.Angle;
 
 //import org.firstinspires.ftc.teamcode.config.FieldLocations;
+import org.firstinspires.ftc.teamcode.config.FieldLocations;
 import org.firstinspires.ftc.teamcode.config.GameState;
 
 /**
@@ -69,9 +71,9 @@ public class DriverAssist {
      *
      * @return {@link Pose} of the closest Hive to the robot's current position.
      */
-//    public Pose getNearestHivePose() {
-//        return FieldLocations.getNearestHive(follower.pose(), GameState.alliance);
-//    }
+    public Pose getNearestHivePose() {
+        return FieldLocations.getNearestHive(follower.pose(), GameState.alliance);
+    }
 
     /**
      * Calculates the target heading (in radians) required for the robot to face or align with
@@ -113,16 +115,27 @@ public class DriverAssist {
         boolean isTargetLock   = (currentMode == DriveMode.FC_TARGET_LOCK || currentMode == DriveMode.RC_TARGET_LOCK);
 
         if (isTargetLock) {
-//            Pose targetHive = getNearestHivePose();
-//            double targetHeading = getTargetHeading(targetHive);
-//            double angleError = Angle.error(robotPose.heading(), targetHeading);
+            Pose targetHive = getNearestHivePose();
+            double targetHeading = getTargetHeading(targetHive);
+            double angleError = Angle.error(robotPose.heading(), targetHeading);
 
             // Proportional heading correction power
-//            turn = Math.max(-1.0, Math.min(1.0, angleError * headingKp));
+            turn = Math.max(-1.0, Math.min(1.0, angleError * headingKp));
         }
 
-        // Drive PedroPathing 3 drivetrain
-        follower.drivetrain.drive(new DrivePowers(forward, strafe, turn), isFieldCentric);
+        if (isFieldCentric) {
+            DrivePowers powers = ManualDrive.fieldCentric(
+                    forward,
+                    strafe,
+                    turn,
+                    robotPose.heading()
+            );
+            ManualDrive.driveOrHold(follower, powers);
+        } else {
+            // Drive PedroPathing 3 drivetrain
+            ManualDrive.driveOrHold(follower, new DrivePowers(forward, strafe, turn));
+        }
+        follower.update();
     }
 
     /**
