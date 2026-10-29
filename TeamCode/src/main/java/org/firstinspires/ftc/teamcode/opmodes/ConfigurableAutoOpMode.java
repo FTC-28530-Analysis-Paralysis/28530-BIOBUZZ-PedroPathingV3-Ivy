@@ -57,17 +57,29 @@ public class ConfigurableAutoOpMode extends OpMode {
 
     @Override
     public void init_loop() {
-        handleMenuInput();
+        boolean inputChanged = handleMenuInput();
 
         AutoRoutine routine = selectedRoutine.getRoutine();
-        follower.setPose(routine.getStartPose());
-        follower.update();
+        if (inputChanged) {
+            follower.setPose(routine.getStartPose());
+            follower.update();
+        }
 
         telemetry.addLine("=== 28530 BIOBUZZ AUTO CONFIGURATION ===");
         telemetry.addData("[D-Pad Up/Down] Selected Routine", selectedRoutine.getName());
         telemetry.addData("[X Button] Selected Alliance", GameState.alliance.getName());
         telemetry.addData("[D-Pad Left/Right] Start Delay", "%.1f sec", startDelaySeconds);
-        telemetry.addData("[Y Button] Vision Interruption", visionInterruptionEnabled ? "ENABLED (Limelight Interrupts)" : "DISABLED (Pure Pathing)");
+
+        String visionText;
+        if (visionInterruptionEnabled) {
+            visionText = robot.limelight.isAvailable()
+                    ? "ENABLED (Limelight Active)"
+                    : "AUTO FALLBACK (Limelight Missing/Unconfigured -> Pure Pathing)";
+        } else {
+            visionText = "DISABLED (Pure Pathing)";
+        }
+        telemetry.addData("[Y Button] Vision Mode", visionText);
+        telemetry.addData("Limelight Hardware", robot.limelight.isAvailable() ? "INITIALIZED (Ready)" : "NOT FOUND");
         telemetry.addLine("---------------------------------------");
         telemetry.addData("Start Pose X", "%.1f", routine.getStartPose().x());
         telemetry.addData("Start Pose Y", "%.1f", routine.getStartPose().y());
@@ -107,25 +119,32 @@ public class ConfigurableAutoOpMode extends OpMode {
         GameState.autonomousEndPose = follower.pose();
     }
 
-    private void handleMenuInput() {
+    private boolean handleMenuInput() {
         if (gamepad1.dpadUpWasPressed()) {
             SelectedRoutine[] routines = SelectedRoutine.values();
             int nextIndex = (selectedRoutine.ordinal() + 1) % routines.length;
             selectedRoutine = routines[nextIndex];
+            return true;
         } else if (gamepad1.dpadDownWasPressed()) {
             SelectedRoutine[] routines = SelectedRoutine.values();
             int prevIndex = (selectedRoutine.ordinal() - 1 + routines.length) % routines.length;
             selectedRoutine = routines[prevIndex];
+            return true;
         } else if (gamepad1.xWasPressed()) {
             GameState.alliance = (GameState.alliance == GameState.Alliance.RED)
                     ? GameState.Alliance.BLUE
                     : GameState.Alliance.RED;
+            return true;
         } else if (gamepad1.dpadRightWasPressed()) {
             startDelaySeconds = Math.min(10.0, startDelaySeconds + 1.0);
+            return false;
         } else if (gamepad1.dpadLeftWasPressed()) {
             startDelaySeconds = Math.max(0.0, startDelaySeconds - 1.0);
+            return false;
         } else if (gamepad1.yWasPressed()) {
             visionInterruptionEnabled = !visionInterruptionEnabled;
+            return false;
         }
+        return false;
     }
 }

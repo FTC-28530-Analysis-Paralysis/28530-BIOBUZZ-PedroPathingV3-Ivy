@@ -115,11 +115,19 @@ public class LimelightSubsystem {
             limelight.pipelineSwitch(Pipeline.APRIL_TAG_HIVE.getId());
             limelight.start();
         } catch (Exception e) {
-            // Hardware unconfigured
+            // Hardware unconfigured or missing
+            limelight = null;
             if (telemetry != null) {
-                telemetry.addLine("Limelight Hardware Unconfigured");
+                telemetry.addLine("Limelight Hardware Unconfigured / Missing");
             }
         }
+    }
+
+    /**
+     * Returns true if the Limelight 3A camera hardware was successfully initialized.
+     */
+    public boolean isAvailable() {
+        return limelight != null;
     }
 
     public void setPipeline(Pipeline pipeline) {

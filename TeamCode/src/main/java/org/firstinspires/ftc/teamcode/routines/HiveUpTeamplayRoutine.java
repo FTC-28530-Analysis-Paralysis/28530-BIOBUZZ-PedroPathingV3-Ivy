@@ -7,85 +7,131 @@ import static com.pedropathing.ivy.groups.Groups.*;
 import static com.pedropathing.ivy.pedro.PedroCommands.follow;
 import com.pedropathing.math.Pose;
 
+import org.firstinspires.ftc.teamcode.config.GameState;
 import org.firstinspires.ftc.teamcode.paths.HiveUpTeamplayPath;
 import org.firstinspires.ftc.teamcode.subsystems.RobotContainer;
 
 public class HiveUpTeamplayRoutine implements AutoRoutine {
 
-    private final HiveUpTeamplayPath path = new HiveUpTeamplayPath();
-
     @Override
     public String getName() {
-        return "Hive Up Teamplay";
+        return "Hive Up Teamplay (" + GameState.alliance.getName() + ")";
     }
 
     @Override
     public Pose getStartPose() {
-        return path.getStartPose();
+        return new HiveUpTeamplayPath(GameState.alliance).getStartPose();
     }
 
     @Override
     public Command buildCommand(Follower follower, RobotContainer robot, boolean visionEnabled, double startDelaySec) {
+        HiveUpTeamplayPath path = new HiveUpTeamplayPath(GameState.alliance);
         Command delayCommand = startDelaySec > 0 ? waitMs(startDelaySec * 1000.0) : instant(() -> {});
 
-        if (visionEnabled) {
-            // Reactive Routine using Limelight triggers & fallbacks
-            return sequential(
-                    delayCommand,
-                    // 1. Prepare swivel & look for AprilTag on Hive
-                    robot.limelight.prepareForHiveDetectionCommand(robot.swivel),
+        // Safely enable vision features ONLY IF manually enabled AND Limelight hardware initialized successfully
+        boolean useVision = visionEnabled && robot.limelight.isAvailable();
 
-                    // 2. Drive to score position while spinning up flywheel launcher in parallel
+        Command mainAutoSequence;
+
+        if (useVision) {
+            // Reactive Vision Routine using Limelight triggers & fallbacks
+            mainAutoSequence = sequential(
+                    delayCommand,
+
+                    // 1. Initial Drive to Score & Launch immediately (facing score on start)
                     parallel(
                             follow(follower, path.startToScore()),
                             robot.launcher.spinUpCommand()
                     ),
-
-                    // 3. Check for hive tipped & launch
-                    race(
-                            robot.limelight.waitForHiveTippedCommand(),
-                            waitMs(1500) // Timeout fallback
-                    ),
                     robot.launcher.launchSequenceCommand(robot.transfer, 1.0),
 
-                    // 4. Drive to garden approach while preparing Limelight for color blob detection
+                    // 2. Drive to Garden Approach on Alliance side & search for Pollen/Nectar (Max 8 seconds)
                     parallel(
                             follow(follower, path.scoreToGardenApproach()),
                             robot.limelight.prepareForBlobDetectionCommand(robot.swivel)
                     ),
-
-                    // 5. Race approach to garden against Limelight detecting pollen/nectar
                     race(
-                            follow(follower, path.gardenPickup()),
-                            robot.limelight.waitForBallDetectedCommand()
-                    ),
-
-                    // 6. Branch depending on whether ball was spotted
-                    conditional(
-                            robot.limelight::seesBallBlob,
                             sequential(
-                                    robot.intake.startCommand(),
-                                    waitMs(1500),
-                                    robot.intake.stopCommand()
+                                    follow(follower, path.gardenPickup()),
+                                    conditional(
+                                            robot.limelight::seesBallBlob,
+                                            sequential(
+                                                    robot.intake.startCommand(),
+                                                    waitMs(1500),
+                                                    robot.intake.stopCommand()
+                                            ),
+                                            instant(() -> {}) // No element spotted
+                                    )
                             ),
-                            follow(follower, path.gardenToScore())
+                            waitMs(8000.0) // 8-second search limit on alliance side
                     ),
 
-                    // 7. Complete score to park
-                    follow(follower, path.scoreToPark())
+                    // 3. Move back to score position & wait for Hive to tip up before launching
+                    follow(follower, path.gardenToScore()),
+                    robot.limelight.prepareForHiveDetectionCommand(robot.swivel),
+                    race(
+                            robot.limelight.waitForHiveTippedCommand(),
+                            waitMs(4000.0) // Timeout fallback if hive doesn't tip
+                    ),
+                    parallel(robot.launcher.spinUpCommand(), instant(() -> {})),
+                    robot.launcher.launchSequenceCommand(robot.transfer, 1.0),
+
+                    // 4. Head to Flower, Intake element, Return to Score & Launch
+                    follow(follower, path.scoreToFlower()),
+                    sequential(
+                            robot.intake.startCommand(),
+                            waitMs(1500),
+                            robot.intake.stopCommand()
+                    ),
+                    follow(follower, path.flowerToScore()),
+                    robot.launcher.launchSequenceCommand(robot.transfer, 1.0)
             );
         } else {
-            // Pure Pathing Routine (Direct Visualizer Path Execution)
-            return sequential(
+            // Non-Limelight / Pure Pathing Fallback (Pure Time & Position Based Execution)
+            mainAutoSequence = sequential(
                     delayCommand,
-                    follow(follower, path.startToScore()),
+
+                    // 1. Start to Score & Launch
+                    parallel(
+                            follow(follower, path.startToScore()),
+                            robot.launcher.spinUpCommand()
+                    ),
+                    robot.launcher.launchSequenceCommand(robot.transfer, 1.0),
+
+                    // 2. Garden Approach & Pickup
                     follow(follower, path.scoreToGardenApproach()),
                     follow(follower, path.gardenPickup()),
-                    follow(follower, path.gardenToScore()),
+
+                    // 3. Return to Score & Launch
+                    parallel(
+                            follow(follower, path.gardenToScore()),
+                            robot.launcher.spinUpCommand()
+                    ),
+                    robot.launcher.launchSequenceCommand(robot.transfer, 1.0),
+
+                    // 4. Head to Flower, Intake, Return to Score & Launch
                     follow(follower, path.scoreToFlower()),
-                    follow(follower, path.flowerToScore()),
-                    follow(follower, path.scoreToPark())
+                    sequential(
+                            robot.intake.startCommand(),
+                            waitMs(1500),
+                            robot.intake.stopCommand()
+                    ),
+                    parallel(
+                            follow(follower, path.flowerToScore()),
+                            robot.launcher.spinUpCommand()
+                    ),
+                    robot.launcher.launchSequenceCommand(robot.transfer, 1.0)
             );
         }
+
+        // Wrap main sequence in a 25-second race limit; interrupt whatever step is running at 25s and Park!
+        return sequential(
+                race(
+                        mainAutoSequence,
+                        waitMs(25000.0) // Hard 25-second limit
+                ),
+                // Final Parking Sequence
+                follow(follower, path.scoreToPark())
+        );
     }
 }
