@@ -38,7 +38,7 @@ public class HiveUpTeamplayPath implements PathContainer {
 
     public HiveUpTeamplayPath(GameState.Alliance alliance) {
         this.poseFactory = (alliance == GameState.Alliance.BLUE)
-                ? PoseFactory.degrees().rotateAround(72, 72, 180)
+                ? PoseFactory.degrees().rotateAround(70.75, 70.75, 180)
                 : PoseFactory.degrees();
 
         start = poseFactory.of(58, 8.5, 90);
