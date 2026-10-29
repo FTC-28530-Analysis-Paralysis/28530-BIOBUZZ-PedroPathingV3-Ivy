@@ -1,10 +1,12 @@
 package org.firstinspires.ftc.teamcode.config;
 
+import com.pedropathing.math.Pose;
+
 /**
  * Global game state configuration including Alliance selection and target element preferences.
  */
 public class GameState {
-
+    public static Pose autonomousEndPose = new Pose(0, 0, 0);
     public enum Alliance {
         RED("Red Alliance"),
         BLUE("Blue Alliance");
