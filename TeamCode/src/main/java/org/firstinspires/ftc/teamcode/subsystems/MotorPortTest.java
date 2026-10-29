@@ -3,7 +3,10 @@ package org.firstinspires.ftc.teamcode.subsystems;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorController;
 import com.qualcomm.robotcore.hardware.DcMotorControllerEx;
+
+import java.util.Set;
 
 /*
  * This is a program I (Mr. Morris) did some research on and then wrote to increment through and power motors one at a time on each Control Hub and
@@ -64,12 +67,30 @@ public class MotorPortTest extends LinearOpMode {
             } else if (!gamepad1.dpad_left) {
                 dpadLeftPressed = false;
             }
+            // Retrieve configured name from HardwareMap if set
+            String configuredName = (!exceptionCaught && motorController != null)
+                    ? getConfiguredMotorName(motorController, motorPortNumber)
+                    : "<Unavailable>";
+
             // Telemetry
             telemetry.addData("Selected Hub", selectedHub);
-            telemetry.addData("motor Power", power);
             telemetry.addData("Selection Index", selectionIndex);
             telemetry.addData("motor Port", motorPortNumber);
+            telemetry.addData("Configured Name", configuredName);
+            telemetry.addData("motor Power", power);
             telemetry.update();
         }
+    }
+
+    private String getConfiguredMotorName(DcMotorController targetController, int port) {
+        for (DcMotor motor : hardwareMap.getAll(DcMotor.class)) {
+            if (motor.getController().equals(targetController) && motor.getPortNumber() == port) {
+                Set<String> names = hardwareMap.getNamesOf(motor);
+                if (!names.isEmpty()) {
+                    return names.iterator().next();
+                }
+            }
+        }
+        return "<Unconfigured / None>";
     }
 }

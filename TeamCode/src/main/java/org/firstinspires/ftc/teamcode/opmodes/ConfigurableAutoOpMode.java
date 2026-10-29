@@ -8,6 +8,7 @@ import static com.pedropathing.ivy.Scheduler.schedule;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
+import org.firstinspires.ftc.teamcode.config.GameState;
 import org.firstinspires.ftc.teamcode.pedro.Constants;
 import org.firstinspires.ftc.teamcode.routines.AutoRoutine;
 import org.firstinspires.ftc.teamcode.routines.HiveDownTeamplayRoutine;
@@ -64,6 +65,7 @@ public class ConfigurableAutoOpMode extends OpMode {
 
         telemetry.addLine("=== 28530 BIOBUZZ AUTO CONFIGURATION ===");
         telemetry.addData("[D-Pad Up/Down] Selected Routine", selectedRoutine.getName());
+        telemetry.addData("[X Button] Selected Alliance", GameState.alliance.getName());
         telemetry.addData("[D-Pad Left/Right] Start Delay", "%.1f sec", startDelaySeconds);
         telemetry.addData("[Y Button] Vision Interruption", visionInterruptionEnabled ? "ENABLED (Limelight Interrupts)" : "DISABLED (Pure Pathing)");
         telemetry.addLine("---------------------------------------");
@@ -100,6 +102,11 @@ public class ConfigurableAutoOpMode extends OpMode {
         }
     }
 
+    @Override
+    public void stop(){
+        GameState.autonomousEndPose = follower.pose();
+    }
+
     private void handleMenuInput() {
         if (gamepad1.dpadUpWasPressed()) {
             SelectedRoutine[] routines = SelectedRoutine.values();
@@ -109,6 +116,10 @@ public class ConfigurableAutoOpMode extends OpMode {
             SelectedRoutine[] routines = SelectedRoutine.values();
             int prevIndex = (selectedRoutine.ordinal() - 1 + routines.length) % routines.length;
             selectedRoutine = routines[prevIndex];
+        } else if (gamepad1.xWasPressed()) {
+            GameState.alliance = (GameState.alliance == GameState.Alliance.RED)
+                    ? GameState.Alliance.BLUE
+                    : GameState.Alliance.RED;
         } else if (gamepad1.dpadRightWasPressed()) {
             startDelaySeconds = Math.min(10.0, startDelaySeconds + 1.0);
         } else if (gamepad1.dpadLeftWasPressed()) {

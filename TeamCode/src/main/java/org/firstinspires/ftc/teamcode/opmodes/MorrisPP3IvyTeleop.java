@@ -7,6 +7,7 @@ import com.pedropathing.math.Pose;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.config.GameState;
 import org.firstinspires.ftc.teamcode.pedro.Constants;
 import org.firstinspires.ftc.teamcode.subsystems.DriverAssist;
 import org.firstinspires.ftc.teamcode.subsystems.RobotContainer;
@@ -35,18 +36,31 @@ public class MorrisPP3IvyTeleop extends OpMode {
         Scheduler.reset();
 
         follower = Constants.create(hardwareMap);
-        follower.setPose(start);
+        follower.setPose(GameState.autonomousEndPose);
         follower.update();
+
         robot = new RobotContainer(hardwareMap, telemetry);
         driverAssist = new DriverAssist(follower);
 
-
         // Default swivel to field intake position
         robot.swivel.lookAtField();
+    }
 
-        telemetry.addLine("=== 28530 BIOBUZZ TELEOP INITIALIZED ===");
+    @Override
+    public void init_loop() {
+        if (gamepad1.xWasPressed()) {
+            GameState.alliance = (GameState.alliance == GameState.Alliance.RED)
+                    ? GameState.Alliance.BLUE
+                    : GameState.Alliance.RED;
+        }
+
+        telemetry.addLine("=== 28530 BIOBUZZ TELEOP CONFIGURATION ===");
+        telemetry.addData("[X Button] Selected Alliance", GameState.alliance.getName());
+        telemetry.addData("Start Pose (from Auto/Default)", "X: %.1f | Y: %.1f | Heading: %.1f°",
+                follower.pose().x(), follower.pose().y(), Math.toDegrees(follower.pose().heading()));
         telemetry.addLine("Drive Mode Default: FIELD-CENTRIC");
-        telemetry.addLine("Ready. Press START.");
+        telemetry.addLine("------------------------------------------");
+        telemetry.addLine("Press START when ready.");
     }
 
     @Override
@@ -65,6 +79,7 @@ public class MorrisPP3IvyTeleop extends OpMode {
 
         // Telemetry
         telemetry.addLine("=== 28530 BIOBUZZ TELEOP ===");
+        telemetry.addData("Alliance", GameState.alliance.getName());
         telemetry.addData("Drive Mode [Start Button]", driverAssist.getMode().getName());
         telemetry.addData("Heading (deg)", Math.toDegrees(follower.pose().heading()));
         telemetry.addData("Target Hive Pose", "X: %.1f | Y: %.1f",
