@@ -30,7 +30,7 @@ public class DriverAssist {
     }
 
     private final Follower follower;
-    private DriveMode currentMode = DriveMode.FIELD_CENTRIC;
+    private DriveMode currentMode = DriveMode.ROBOT_CENTRIC;
 
     // Proportional gain for target locking. Tune for responsive but stable heading alignment.
     private double headingKp = 1.2;

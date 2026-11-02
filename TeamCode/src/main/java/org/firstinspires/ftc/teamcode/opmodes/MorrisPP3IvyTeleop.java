@@ -96,8 +96,8 @@ public class MorrisPP3IvyTeleop extends OpMode {
         // Cycle Drive Modes: FIELD_CENTRIC -> ROBOT_CENTRIC -> FC_TARGET_LOCK -> FIELD_CENTRIC
         if (gamepad1.startWasPressed()) {
             DriverAssist.DriveMode[] modes = {
-                    DriverAssist.DriveMode.FIELD_CENTRIC,
                     DriverAssist.DriveMode.ROBOT_CENTRIC,
+                    DriverAssist.DriveMode.FIELD_CENTRIC,
                     DriverAssist.DriveMode.FC_TARGET_LOCK
             };
             int nextIdx = (driverAssist.getMode().ordinal() + 1) % modes.length;
@@ -131,16 +131,16 @@ public class MorrisPP3IvyTeleop extends OpMode {
         }
 
         // Swivel servo toggle
-        if (gamepad1.leftBumperWasPressed()) {
-            robot.swivel.lookAtHive();
-        } else if (gamepad1.leftTriggerWasPressed()) {
-            robot.swivel.lookAtField();
-        }
+//        if (gamepad1.leftBumperWasPressed()) {
+//            robot.swivel.lookAtHive();
+//        } else if (gamepad1.leftTriggerWasPressed()) {
+//            robot.swivel.lookAtField();
+//        }
 
         // Trigger timed launch sequence (spins up flywheel, feeds pollen, then stops)
         if (gamepad1.rightBumperWasPressed()) {
-            isIntakeRunning = false;
-            robot.intake.stop();
+//            isIntakeRunning = false;
+//            robot.intake.stop();
             Scheduler.schedule(robot.launcher.launchSequenceCommand(robot.transfer, 1.5));
         }
     }
