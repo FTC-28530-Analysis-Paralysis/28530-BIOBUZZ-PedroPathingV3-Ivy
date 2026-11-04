@@ -28,9 +28,9 @@ public class TransferSubsystem {
         }
     }
 
-    public void feed() { setPower(0.8); }
+    public void feed() { setPower(-0.8); }
     public void stop() { setPower(0.0); }
-    public void reverse() { setPower(-0.8); }
+    public void reverse() { setPower(0.8); }
 
     // Ivy Commands
     public Command feedCommand() { return instant(this::feed); }

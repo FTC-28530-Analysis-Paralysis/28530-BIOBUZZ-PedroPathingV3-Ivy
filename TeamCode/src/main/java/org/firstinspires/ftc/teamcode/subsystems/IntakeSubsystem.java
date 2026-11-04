@@ -17,7 +17,7 @@ public class IntakeSubsystem {
     public void init(HardwareMap hardwareMap, Telemetry telemetry) {
         try {
             intakeMotor = hardwareMap.get(DcMotor.class, "intake");
-            intakeMotor.setDirection(DcMotor.Direction.FORWARD);
+            intakeMotor.setDirection(DcMotor.Direction.REVERSE);
             intakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         } catch (Exception e) {
             // Hardware unconfigured
