@@ -88,8 +88,10 @@ public class MorrisPP3IvyTeleop extends OpMode {
         telemetry.addData("Robot Pose", "X: %.1f | Y: %.1f", follower.pose().x(), follower.pose().y());
         telemetry.addLine("--------------------------------");
         telemetry.addData("Intake Status [A / B]", isIntakeRunning ? "RUNNING" : "STOPPED");
-        telemetry.addLine("[Right Bumper] Timed Launch Sequence");
-        telemetry.addLine("[Left Bumper] Swivel Position (Hive / Field)");
+        robot.launcher.addTelemetry(telemetry);
+        telemetry.addLine("[Dpad Up/Down] Adjust Launcher Velocity");
+        telemetry.addLine("[Y] Spin Up Launcher (Stay On) | [X] Stop Launcher");
+        telemetry.addLine("[Right Bumper] Launch Sequence (Feeds & Keeps Running)");
     }
 
     private void handleDriveControls() {
@@ -130,17 +132,25 @@ public class MorrisPP3IvyTeleop extends OpMode {
             robot.intake.reverse();
         }
 
-        // Swivel servo toggle
-//        if (gamepad1.leftBumperWasPressed()) {
-//            robot.swivel.lookAtHive();
-//        } else if (gamepad1.leftTriggerWasPressed()) {
-//            robot.swivel.lookAtField();
-//        }
+        // Adjust Launcher Velocity with Dpad Up / Down
+        if (gamepad1.dpadUpWasPressed()) {
+            robot.launcher.increaseSpeed();
+        } else if (gamepad1.dpadDownWasPressed()) {
+            robot.launcher.decreaseSpeed();
+        }
 
-        // Trigger timed launch sequence (spins up flywheel, feeds pollen, then stops)
+        // Spin Up Launcher (Stays on)
+        if (gamepad1.yWasPressed()) {
+            robot.launcher.spinUp();
+        }
+
+        // Stop Launcher
+        if (gamepad1.xWasPressed()) {
+            robot.launcher.stop();
+        }
+
+        // Trigger timed launch sequence (spins up flywheel, feeds pollen, then leaves flywheel running)
         if (gamepad1.rightBumperWasPressed()) {
-//            isIntakeRunning = false;
-//            robot.intake.stop();
             Scheduler.schedule(robot.launcher.launchSequenceCommand(robot.transfer, 1.5));
         }
     }
