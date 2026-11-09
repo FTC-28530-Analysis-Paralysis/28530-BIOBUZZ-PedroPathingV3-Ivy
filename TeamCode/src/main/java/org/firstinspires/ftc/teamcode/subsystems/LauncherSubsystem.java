@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.subsystems;
 import com.pedropathing.ivy.Command;
 import static com.pedropathing.ivy.commands.Commands.*;
 import static com.pedropathing.ivy.groups.Groups.sequential;
+
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -15,10 +16,13 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 public class LauncherSubsystem {
     private DcMotorEx leftFlywheel = null;
     private DcMotorEx rightFlywheel = null;
-    public static double STARTING_SPEED = 3000; // starting velocity (RPM / ticks per second)
+    public static double STARTING_SPEED = 1040; // starting velocity (RPM / ticks per second)
 
     public static double SPEED_INCREMENT = 50; // how much to adjust flywheel velocity
     public double currentSpeed = STARTING_SPEED;
+    public static final double RPM_TOLERANCE = 25;
+
+    private double targetRPM = 0;
     private boolean isSpinningUp = false;
 
     public void init(HardwareMap hardwareMap, Telemetry telemetry) {
@@ -50,6 +54,7 @@ public class LauncherSubsystem {
         setVelocity(0.0);
     }
 
+
     public void increaseSpeed() {
         currentSpeed += SPEED_INCREMENT;
         if (isSpinningUp) {
@@ -63,6 +68,13 @@ public class LauncherSubsystem {
             spinUp();
         }
     }
+
+//    public boolean isAtTargetSpeed() {
+//        double Error = Math.abs(targetRPM - STARTING_SPEED());
+//        return (leftError < RPM_TOLERANCE);
+//    }
+
+
 
     public void addTelemetry(Telemetry telemetry) {
         telemetry.addData("Launcher Target Velocity", currentSpeed);
@@ -84,13 +96,19 @@ public class LauncherSubsystem {
     /**
      * Spins up launcher, waits for flywheel spin-up time, then feeds pollen (leaving flywheel running).
      */
-    public Command launchSequenceCommand(TransferSubsystem transfer, double feedDurationSeconds) {
+    public Command launchSequenceCommand(TransferSubsystem transfer, IntakeSubsystem intake, double feedDurationSeconds) {
         return sequential(
+
                 instant(this::spinUp),
                 waitMs(800), // Spin-up delay
                 transfer.feedCommand(),
+                intake.intakeForDurationCommand(feedDurationSeconds),
                 waitMs(feedDurationSeconds * 1000.0),
                 transfer.stopCommand()
         );
     }
+//    public double getTargetRPM(){
+//        return targetRPM;
+//    }
+
 }

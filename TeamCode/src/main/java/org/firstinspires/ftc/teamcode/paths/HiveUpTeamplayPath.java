@@ -53,7 +53,7 @@ public class HiveUpTeamplayPath implements PathContainer {
         scoreToFlowerControl2 = poseFactory.of(25, 42.0, 0);
         flowerToScoreControl1 = poseFactory.of(25.5, 42, 0);
         flowerToScoreControl2 = poseFactory.of(57, 30, 0);
-        park = poseFactory.of(10, 90, 90);
+        park = poseFactory.of(10, 93.5, 90);
         scoreToParkControl1 = poseFactory.of(58, 28, 0);
         scoreToParkControl2 = poseFactory.of(10, 40, 0);
     }

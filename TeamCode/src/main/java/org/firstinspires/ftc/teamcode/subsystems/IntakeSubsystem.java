@@ -31,7 +31,7 @@ public class IntakeSubsystem {
         }
     }
 
-    public void start() { setPower(1.0); }
+    public void start() { setPower(0.75); }
     public void stop() { setPower(0.0); }
     public void reverse() { setPower(-1.0); }
 
@@ -46,6 +46,7 @@ public class IntakeSubsystem {
 
     public Command intakeForDurationCommand(double seconds) {
         return sequential(
+                waitMs(seconds * 1000.0),
                 instant(this::start),
                 waitMs(seconds * 1000.0),
                 instant(this::stop)

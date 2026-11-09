@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmodes;
 
+import static com.pedropathing.ivy.commands.Commands.waitMs;
+
 import com.pedropathing.api.PoseFactory;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.ivy.Scheduler;
@@ -149,9 +151,12 @@ public class MorrisPP3IvyTeleop extends OpMode {
             robot.launcher.stop();
         }
 
+
+
+
         // Trigger timed launch sequence (spins up flywheel, feeds pollen, then leaves flywheel running)
         if (gamepad1.rightBumperWasPressed()) {
-            Scheduler.schedule(robot.launcher.launchSequenceCommand(robot.transfer, 1.5));
+            Scheduler.schedule(robot.launcher.launchSequenceCommand(robot.transfer, robot.intake, 1.5));
         }
     }
 }

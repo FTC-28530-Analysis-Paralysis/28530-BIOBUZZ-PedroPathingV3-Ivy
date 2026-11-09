@@ -120,6 +120,7 @@ public class ConfigurableAutoOpMode extends OpMode {
     }
 
     private boolean handleMenuInput() {
+
         if (gamepad1.dpadUpWasPressed()) {
             SelectedRoutine[] routines = SelectedRoutine.values();
             int nextIndex = (selectedRoutine.ordinal() + 1) % routines.length;
