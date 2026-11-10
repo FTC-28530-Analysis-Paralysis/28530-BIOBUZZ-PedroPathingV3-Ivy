@@ -1,17 +1,17 @@
 package org.firstinspires.ftc.teamcode.routines;
 
-import com.pedropathing.api.PoseFactory;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.ivy.Command;
 import static com.pedropathing.ivy.commands.Commands.*;
 import static com.pedropathing.ivy.groups.Groups.*;
+import static com.pedropathing.ivy.pedro.PedroCommands.follow;
 import com.pedropathing.math.Pose;
 
-import org.firstinspires.ftc.teamcode.config.FieldLocations;
 import org.firstinspires.ftc.teamcode.config.GameState;
+import org.firstinspires.ftc.teamcode.paths.ParkOnlyCornerNearParkingZonePath;
 import org.firstinspires.ftc.teamcode.subsystems.RobotContainer;
 
-public class ParkOnlyRoutine implements AutoRoutine {
+public class ParkOnlyCornerNearParkingZoneRoutine implements AutoRoutine {
 
     @Override
     public String getName() {
@@ -20,20 +20,17 @@ public class ParkOnlyRoutine implements AutoRoutine {
 
     @Override
     public Pose getStartPose() {
-        Pose baseStart = FieldLocations.START_C1;
-        if (GameState.alliance == GameState.Alliance.BLUE) {
-            return PoseFactory.degrees().rotateAround(72, 72, 180).of(baseStart.x(), baseStart.y(), Math.toDegrees(baseStart.heading()));
-        }
-        return baseStart;
+        return new ParkOnlyCornerNearParkingZonePath(GameState.alliance).getStartPose();
     }
 
     @Override
     public Command buildCommand(Follower follower, RobotContainer robot, boolean visionEnabled, double startDelaySec) {
+        ParkOnlyCornerNearParkingZonePath path = new ParkOnlyCornerNearParkingZonePath(GameState.alliance);
         Command delayCommand = startDelaySec > 0 ? waitMs(startDelaySec * 1000.0) : instant(() -> {});
 
         return sequential(
                 delayCommand,
-                instant(() -> {})
+                follow(follower, path.startToPark())
         );
     }
 }

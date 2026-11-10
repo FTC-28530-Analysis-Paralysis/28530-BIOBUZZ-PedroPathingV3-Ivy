@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.pedro.Constants;
 import org.firstinspires.ftc.teamcode.routines.AutoRoutine;
 import org.firstinspires.ftc.teamcode.routines.HiveDownTeamplayRoutine;
 import org.firstinspires.ftc.teamcode.routines.HiveUpTeamplayRoutine;
-import org.firstinspires.ftc.teamcode.routines.ParkOnlyRoutine;
+import org.firstinspires.ftc.teamcode.routines.ParkOnlyCornerNearParkingZoneRoutine;
 import org.firstinspires.ftc.teamcode.subsystems.RobotContainer;
 
 /**
@@ -32,7 +32,7 @@ public class ConfigurableAutoOpMode extends OpMode {
     public enum SelectedRoutine {
         HIVE_UP_TEAMPLAY(new HiveUpTeamplayRoutine()),
         HIVE_DOWN_TEAMPLAY(new HiveDownTeamplayRoutine()),
-        PARK_ONLY(new ParkOnlyRoutine());
+        PARK_ONLY(new ParkOnlyCornerNearParkingZoneRoutine());
 
         private final AutoRoutine routine;
         SelectedRoutine(AutoRoutine routine) { this.routine = routine; }

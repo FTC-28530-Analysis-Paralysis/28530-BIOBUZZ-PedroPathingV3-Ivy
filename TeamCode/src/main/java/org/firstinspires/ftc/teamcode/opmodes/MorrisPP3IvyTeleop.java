@@ -156,7 +156,7 @@ public class MorrisPP3IvyTeleop extends OpMode {
 
         // Trigger timed launch sequence (spins up flywheel, feeds pollen, then leaves flywheel running)
         if (gamepad1.rightBumperWasPressed()) {
-            Scheduler.schedule(robot.launcher.launchSequenceCommand(robot.transfer, robot.intake, 1.5));
+            Scheduler.schedule(robot.launchSequenceCommand(1.5));
         }
     }
 }

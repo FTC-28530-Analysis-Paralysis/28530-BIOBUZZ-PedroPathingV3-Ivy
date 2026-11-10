@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.pedropathing.ivy.Command;
 import static com.pedropathing.ivy.commands.Commands.*;
-import static com.pedropathing.ivy.groups.Groups.*;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -10,19 +9,19 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-import java.util.function.BooleanSupplier;
-
 /**
  * Subsystem for flywheel launcher mechanism with Ivy Commands using velocity control.
  */
 public class LauncherSubsystem {
     private DcMotorEx leftFlywheel = null;
     private DcMotorEx rightFlywheel = null;
-    public static double STARTING_SPEED = 1040; // starting velocity (RPM / ticks per second)
 
-    public static double SPEED_INCREMENT = 50; // how much to adjust flywheel velocity
+    public static double STARTING_SPEED = 1040; // starting velocity (RPM / ticks per second)
+    public static double SPEED_INCREMENT = 50;  // speed adjustment step
+    public static double DEFAULT_FEED_DURATION = 3.0; // global default launch feed duration in seconds
+    public static final double RPM_TOLERANCE = 25.0; // velocity error tolerance
+
     public double targetSpeed = STARTING_SPEED;
-    public static final double RPM_TOLERANCE = 25;
     private boolean isSpinningUp = false;
 
     public void init(HardwareMap hardwareMap, Telemetry telemetry) {
@@ -35,7 +34,9 @@ public class LauncherSubsystem {
             rightFlywheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         } catch (Exception e) {
             // Hardware unconfigured
-            telemetry.addLine("Launcher Hardware not configured");
+            if (telemetry != null) {
+                telemetry.addLine("Launcher Hardware not configured");
+            }
         }
     }
 
@@ -54,7 +55,6 @@ public class LauncherSubsystem {
         setVelocity(0.0);
     }
 
-
     public void increaseSpeed() {
         targetSpeed += SPEED_INCREMENT;
         if (isSpinningUp) {
@@ -69,9 +69,15 @@ public class LauncherSubsystem {
         }
     }
 
+    /**
+     * Checks whether both flywheels are within RPM_TOLERANCE of targetSpeed.
+     */
     public boolean isAtTargetSpeed() {
-        double error = Math.abs(leftFlywheel.getVelocity() - targetSpeed);
-        return (error < RPM_TOLERANCE);
+        if (leftFlywheel == null || rightFlywheel == null) return true;
+        double leftVel = Math.abs(leftFlywheel.getVelocity());
+        double rightVel = Math.abs(rightFlywheel.getVelocity());
+        double target = Math.abs(targetSpeed);
+        return Math.abs(leftVel - target) <= RPM_TOLERANCE && Math.abs(rightVel - target) <= RPM_TOLERANCE;
     }
 
     public void addTelemetry(Telemetry telemetry) {
@@ -79,6 +85,7 @@ public class LauncherSubsystem {
         if (leftFlywheel != null && rightFlywheel != null) {
             telemetry.addData("Launcher Actual Velocity (L/R)", "%.1f / %.1f",
                     leftFlywheel.getVelocity(), rightFlywheel.getVelocity());
+            telemetry.addData("Flywheel Target Ready", isAtTargetSpeed() ? "YES" : "NO");
         }
     }
 
@@ -90,24 +97,4 @@ public class LauncherSubsystem {
     public Command stopCommand() {
         return instant(this::stop);
     }
-
-    /**
-     * Spins up launcher, waits for flywheel spin-up time, then feeds pollen (leaving flywheel running).
-     */
-    public Command launchSequenceCommand(TransferSubsystem transfer, IntakeSubsystem intake, double feedDurationSeconds) {
-        return sequential(
-
-                instant(this::spinUp),
-                waitUntil(this::isAtTargetSpeed),
-                parallel(
-                    transfer.feedCommand(),
-                    intake.intakeForDurationCommand(feedDurationSeconds)
-                ),
-                transfer.stopCommand()
-        );
-    }
-//    public double getTargetRPM(){
-//        return targetRPM;
-//    }
-
 }

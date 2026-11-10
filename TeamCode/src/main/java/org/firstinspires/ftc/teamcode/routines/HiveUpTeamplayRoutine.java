@@ -43,7 +43,7 @@ public class HiveUpTeamplayRoutine implements AutoRoutine {
                             follow(follower, path.startToScore()),
                             robot.launcher.spinUpCommand()
                     ),
-                    robot.launcher.launchSequenceCommand(robot.transfer, robot.intake, 3.0),
+                    robot.launchSequenceCommand(),
 
                     // 2. Drive to Garden Approach on Alliance side & search for Pollen/Nectar (Max 8 seconds)
                     parallel(
@@ -74,7 +74,7 @@ public class HiveUpTeamplayRoutine implements AutoRoutine {
                             waitMs(4000.0) // Timeout fallback if hive doesn't tip
                     ),
                     parallel(robot.launcher.spinUpCommand(), instant(() -> {})),
-                    robot.launcher.launchSequenceCommand(robot.transfer, robot.intake,3.0),
+                    robot.launchSequenceCommand(),
 
                     // 4. Head to Flower, Intake element, Return to Score & Launch
                     follow(follower, path.scoreToFlower()),
@@ -84,7 +84,7 @@ public class HiveUpTeamplayRoutine implements AutoRoutine {
                             robot.intake.stopCommand()
                     ),
                     follow(follower, path.flowerToScore()),
-                    robot.launcher.launchSequenceCommand(robot.transfer, robot.intake,3.0)
+                    robot.launchSequenceCommand()
             );
         } else {
             // Non-Limelight / Pure Pathing Fallback (Pure Time & Position Based Execution)
@@ -96,18 +96,22 @@ public class HiveUpTeamplayRoutine implements AutoRoutine {
                             follow(follower, path.startToScore()),
                             robot.launcher.spinUpCommand()
                     ),
-                    robot.launcher.launchSequenceCommand(robot.transfer, robot.intake, 3.0),
+                    robot.launchSequenceCommand(),
 
                     // 2. Garden Approach & Pickup
-                    follow(follower, path.scoreToGardenApproach()),
+                    parallel(
+                        follow(follower, path.scoreToGardenApproach()),
+                        robot.intake.startCommand()
+                    ),
                     follow(follower, path.gardenPickup()),
+                    robot.intake.stopCommand(),
 
                     // 3. Return to Score & Launch
                     parallel(
                             follow(follower, path.gardenToScore()),
                             robot.launcher.spinUpCommand()
                     ),
-                    robot.launcher.launchSequenceCommand(robot.transfer, robot.intake, 3.0),
+                    robot.launchSequenceCommand(),
 
                     // 4. Head to Flower, Intake, Return to Score & Launch
                     follow(follower, path.scoreToFlower()),
@@ -120,7 +124,7 @@ public class HiveUpTeamplayRoutine implements AutoRoutine {
                             follow(follower, path.flowerToScore()),
                             robot.launcher.spinUpCommand()
                     ),
-                    robot.launcher.launchSequenceCommand(robot.transfer, robot.intake,3.0)
+                    robot.launchSequenceCommand()
             );
         }
 
