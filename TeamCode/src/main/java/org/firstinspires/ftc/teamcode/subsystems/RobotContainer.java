@@ -42,7 +42,7 @@ public class RobotContainer {
      * @param totalDurationSeconds Total duration for the launching sequence.
      */
     public Command launchSequenceCommand(double totalDurationSeconds) {
-        double pulseDuration = 0.5; // Duration of each burst pulse in seconds
+        double pulseDuration = 0.3; // Duration of each burst pulse in seconds
         int pulseCount = Math.max(1, (int) Math.ceil(totalDurationSeconds / pulseDuration));
 
         Command[] pulses = new Command[pulseCount];

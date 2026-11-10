@@ -12,18 +12,18 @@ import org.firstinspires.ftc.teamcode.config.GameState;
  * Pure path definitions separated from OpMode execution logic.
  * Automatically handles alliance mirroring via PoseFactory.
  */
-public class ParkOnlyCornerNearParkingZonePath implements PathContainer {
+public class ParkOnlyCornerPath implements PathContainer {
 
     private final PoseFactory poseFactory;
 
     private final Pose start;
     private final Pose park;
 
-    public ParkOnlyCornerNearParkingZonePath() {
+    public ParkOnlyCornerPath() {
         this(GameState.alliance);
     }
 
-    public ParkOnlyCornerNearParkingZonePath(GameState.Alliance alliance) {
+    public ParkOnlyCornerPath(GameState.Alliance alliance) {
         this.poseFactory = (alliance == GameState.Alliance.BLUE)
                 ? PoseFactory.degrees().rotateAround(70.75, 70.75, 180)
                 : PoseFactory.degrees();

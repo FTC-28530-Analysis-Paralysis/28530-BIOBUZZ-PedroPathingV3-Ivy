@@ -8,10 +8,10 @@ import static com.pedropathing.ivy.pedro.PedroCommands.follow;
 import com.pedropathing.math.Pose;
 
 import org.firstinspires.ftc.teamcode.config.GameState;
-import org.firstinspires.ftc.teamcode.paths.ParkOnlyCornerNearParkingZonePath;
+import org.firstinspires.ftc.teamcode.paths.ParkOnlyCornerPath;
 import org.firstinspires.ftc.teamcode.subsystems.RobotContainer;
 
-public class ParkOnlyCornerNearParkingZoneRoutine implements AutoRoutine {
+public class ParkOnlyCornerRoutine implements AutoRoutine {
 
     @Override
     public String getName() {
@@ -20,12 +20,12 @@ public class ParkOnlyCornerNearParkingZoneRoutine implements AutoRoutine {
 
     @Override
     public Pose getStartPose() {
-        return new ParkOnlyCornerNearParkingZonePath(GameState.alliance).getStartPose();
+        return new ParkOnlyCornerPath(GameState.alliance).getStartPose();
     }
 
     @Override
     public Command buildCommand(Follower follower, RobotContainer robot, boolean visionEnabled, double startDelaySec) {
-        ParkOnlyCornerNearParkingZonePath path = new ParkOnlyCornerNearParkingZonePath(GameState.alliance);
+        ParkOnlyCornerPath path = new ParkOnlyCornerPath(GameState.alliance);
         Command delayCommand = startDelaySec > 0 ? waitMs(startDelaySec * 1000.0) : instant(() -> {});
 
         return sequential(
