@@ -2,13 +2,15 @@ package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.pedropathing.ivy.Command;
 import static com.pedropathing.ivy.commands.Commands.*;
-import static com.pedropathing.ivy.groups.Groups.sequential;
+import static com.pedropathing.ivy.groups.Groups.*;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+
+import java.util.function.BooleanSupplier;
 
 /**
  * Subsystem for flywheel launcher mechanism with Ivy Commands using velocity control.
@@ -19,10 +21,8 @@ public class LauncherSubsystem {
     public static double STARTING_SPEED = 1040; // starting velocity (RPM / ticks per second)
 
     public static double SPEED_INCREMENT = 50; // how much to adjust flywheel velocity
-    public double currentSpeed = STARTING_SPEED;
+    public double targetSpeed = STARTING_SPEED;
     public static final double RPM_TOLERANCE = 25;
-
-    private double targetRPM = 0;
     private boolean isSpinningUp = false;
 
     public void init(HardwareMap hardwareMap, Telemetry telemetry) {
@@ -46,7 +46,7 @@ public class LauncherSubsystem {
 
     public void spinUp() {
         isSpinningUp = true;
-        setVelocity(currentSpeed);
+        setVelocity(targetSpeed);
     }
 
     public void stop() {
@@ -56,28 +56,26 @@ public class LauncherSubsystem {
 
 
     public void increaseSpeed() {
-        currentSpeed += SPEED_INCREMENT;
+        targetSpeed += SPEED_INCREMENT;
         if (isSpinningUp) {
             spinUp();
         }
     }
 
     public void decreaseSpeed() {
-        currentSpeed = Math.max(0, currentSpeed - SPEED_INCREMENT);
+        targetSpeed = Math.max(0, targetSpeed - SPEED_INCREMENT);
         if (isSpinningUp) {
             spinUp();
         }
     }
 
-//    public boolean isAtTargetSpeed() {
-//        double Error = Math.abs(targetRPM - STARTING_SPEED());
-//        return (leftError < RPM_TOLERANCE);
-//    }
-
-
+    public boolean isAtTargetSpeed() {
+        double error = Math.abs(leftFlywheel.getVelocity() - targetSpeed);
+        return (error < RPM_TOLERANCE);
+    }
 
     public void addTelemetry(Telemetry telemetry) {
-        telemetry.addData("Launcher Target Velocity", currentSpeed);
+        telemetry.addData("Launcher Target Velocity", targetSpeed);
         if (leftFlywheel != null && rightFlywheel != null) {
             telemetry.addData("Launcher Actual Velocity (L/R)", "%.1f / %.1f",
                     leftFlywheel.getVelocity(), rightFlywheel.getVelocity());
@@ -100,10 +98,11 @@ public class LauncherSubsystem {
         return sequential(
 
                 instant(this::spinUp),
-                waitMs(800), // Spin-up delay
-                transfer.feedCommand(),
-                intake.intakeForDurationCommand(feedDurationSeconds),
-                waitMs(feedDurationSeconds * 1000.0),
+                waitUntil(this::isAtTargetSpeed),
+                parallel(
+                    transfer.feedCommand(),
+                    intake.intakeForDurationCommand(feedDurationSeconds)
+                ),
                 transfer.stopCommand()
         );
     }

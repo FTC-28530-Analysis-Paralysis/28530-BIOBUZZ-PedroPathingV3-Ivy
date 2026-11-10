@@ -70,6 +70,7 @@ public class ConfigurableAutoOpMode extends OpMode {
         telemetry.addData("[X Button] Selected Alliance", GameState.alliance.getName());
         telemetry.addData("[D-Pad Left/Right] Start Delay", "%.1f sec", startDelaySeconds);
 
+
         String visionText;
         if (visionInterruptionEnabled) {
             visionText = robot.limelight.isAvailable()
@@ -86,6 +87,7 @@ public class ConfigurableAutoOpMode extends OpMode {
         telemetry.addData("Start Heading", "%.1f deg", Math.toDegrees(routine.getStartPose().heading()));
         telemetry.addLine("---------------------------------------");
         telemetry.addLine("Press START when driver station is ready.");
+        telemetry.addLine("[Dpad Up/Down] Adjust Launcher Velocity");
     }
 
     @Override
@@ -112,6 +114,7 @@ public class ConfigurableAutoOpMode extends OpMode {
             telemetry.addData("Path Remaining Distance", follower.distanceToEndpoint());
             telemetry.addData("Path Index", follower.pathIndex());
         }
+        robot.launcher.addTelemetry(telemetry);
     }
 
     @Override

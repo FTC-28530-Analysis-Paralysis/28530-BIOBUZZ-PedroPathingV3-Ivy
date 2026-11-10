@@ -42,7 +42,7 @@ public class HiveUpTeamplayPath implements PathContainer {
                 : PoseFactory.degrees();
 
         start = poseFactory.of(58, 8.5, 90);
-        score = poseFactory.of(58, 14, 90);
+        score = poseFactory.of(58, 24, 90);
         gardenApproach = poseFactory.of(24, 9.5, 180);
         scoreToGardenApproachControl1 = poseFactory.of(57, 21, 0);
         scoreToGardenApproachControl2 = poseFactory.of(37, 9.5, 0);
