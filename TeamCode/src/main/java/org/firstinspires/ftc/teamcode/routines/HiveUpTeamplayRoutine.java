@@ -135,7 +135,12 @@ public class HiveUpTeamplayRoutine implements AutoRoutine {
                         waitMs(25000.0) // Hard 25-second limit
                 ),
                 // Final Parking Sequence
-                follow(follower, path.scoreToPark())
+                parallel(
+                        robot.launcher.stopCommand(),
+                        robot.transfer.stopCommand(),
+                        robot.intake.stopCommand(),
+                        follow(follower, path.scoreToPark())
+                )
         );
     }
 }

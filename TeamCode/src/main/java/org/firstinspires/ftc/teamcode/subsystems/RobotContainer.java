@@ -49,18 +49,15 @@ public class RobotContainer {
         for (int i = 0; i < pulseCount; i++) {
             pulses[i] = sequential(
                     waitUntil(launcher::isAtTargetSpeed),
-                    parallel(
-                            transfer.feedCommand(),
-                            intake.startCommand()
-                    ),
+                    transfer.feedCommand(),
                     waitMs(pulseDuration * 1000.0),
-                    transfer.stopCommand(),
-                    intake.stopCommand()
+                    transfer.stopCommand()
             );
         }
 
         return sequential(
                 launcher.spinUpCommand(),
+                intake.startCommand(),
                 sequential(pulses),
                 transfer.stopCommand(),
                 intake.stopCommand()
