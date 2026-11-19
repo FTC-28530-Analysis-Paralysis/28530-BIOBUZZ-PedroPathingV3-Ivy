@@ -53,9 +53,9 @@ public class RobotContainer {
             pulses[i] = sequential(
                     waitUntil(launcher::isAtTargetSpeed),
                     transfer.feedCommand(),
-                    gateServo.Open()),
+                    gateServo.Open(),
                     waitMs(pulseDuration * 1000.0),
-                    transfer.stopCommand()
+                    gateServo.Close()
             );
         }
 

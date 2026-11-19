@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class GateServo {
-    private Servo GateServo;
+    private Servo gateServo;
 
     // Define the servo positions for each track. These are placeholders and must be tuned.
     public static final double OPEN_POSITION = 0.0;
@@ -24,7 +24,7 @@ public class GateServo {
 
     public void init(HardwareMap hardwareMap, Telemetry telemetry) {
         try {
-            GateServo = hardwareMap.get(Servo.class, "GateServo");
+            gateServo = hardwareMap.get(Servo.class, "gate");
         } catch (Exception e) {
             // Hardware unconfigured
             if (telemetry != null) {
@@ -35,22 +35,23 @@ public class GateServo {
 
     /**
      * Sets the diverter gate to the specified position.
-     * @param position The target position (Open or GREEN).
+     * @param position The target position (Open or Closed).
      */
     private void setPosition(GatePosition position) {
-        GateServo.setPosition(position);
+        if (gateServo != null) {
+            if (position == GatePosition.Open) {
+                gateServo.setPosition(OPEN_POSITION);
+            } else {
+                gateServo.setPosition(CLOSED_POSITION);
+            }
+        }
     }
-
 
     public Command Open() {
-        return instant(this::setPosition(OPEN_POSITION));
+        return instant(() -> setPosition(GatePosition.Open));
     }
-
-    private void setPosition(GatePosition position) {
-    }
-
 
     public Command Close() {
-        return
+        return instant(() -> setPosition(GatePosition.Closed));
     }
 }
