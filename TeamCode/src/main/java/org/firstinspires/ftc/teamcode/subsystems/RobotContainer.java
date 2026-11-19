@@ -19,12 +19,15 @@ public class RobotContainer {
     public final SwivelSubsystem swivel = new SwivelSubsystem();
     public final LimelightSubsystem limelight = new LimelightSubsystem();
 
+    public final GateServo gateServo = new GateServo();
+
     public RobotContainer(HardwareMap hardwareMap, Telemetry telemetry) {
         intake.init(hardwareMap, telemetry);
         launcher.init(hardwareMap, telemetry);
         transfer.init(hardwareMap, telemetry);
         swivel.init(hardwareMap, telemetry);
         limelight.init(hardwareMap, telemetry);
+        gateServo.init(hardwareMap, telemetry);
     }
 
     /**
@@ -50,6 +53,7 @@ public class RobotContainer {
             pulses[i] = sequential(
                     waitUntil(launcher::isAtTargetSpeed),
                     transfer.feedCommand(),
+                    gateServo.Open()),
                     waitMs(pulseDuration * 1000.0),
                     transfer.stopCommand()
             );
@@ -59,8 +63,7 @@ public class RobotContainer {
                 launcher.spinUpCommand(),
                 intake.startCommand(),
                 sequential(pulses),
-                transfer.stopCommand(),
-                intake.stopCommand()
+                transfer.stopCommand()
         );
     }
 }
